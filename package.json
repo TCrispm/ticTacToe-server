@@ -1,0 +1,24 @@
+{
+  "name": "tictactoe-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TCrispm/ticTacToe-server.git"
+  },
+  "author": "Tiago Marreiros",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TCrispm/ticTacToe-server/issues"
+  },
+  "homepage": "https://github.com/TCrispm/ticTacToe-server#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2"
+  },
+  "devDependencies": {}
+}
