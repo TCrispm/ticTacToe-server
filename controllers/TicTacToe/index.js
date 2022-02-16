@@ -2,14 +2,7 @@ const fs = require('fs')
 const file = require('../../data.json');
 const ErrorResponse = require("../../utils/errorResponse");
 
-const resetBoard = (next) => {
-    const data = [[null,null,null],[null,null,null],[null,null,null]]
-    fs.writeFileSync('data.json', JSON.stringify(data), function writeJSON(err) {
-        if (err) return next(new ErrorResponse(err, 500));
-    });
-}
-
-const validateVictory = (player, x, y) => {
+const validateGame = (player, x, y) => {
 
     //check col
     for(let i = 0; i < 3; i++){
@@ -51,17 +44,31 @@ const validateVictory = (player, x, y) => {
         }
     }
 
+    //check draw
+
 
     return false
+}
+
+exports.resetBoard = async (req, res, next) => {
+    try {
+        const data = [[null,null,null],[null,null,null],[null,null,null]]
+        fs.writeFileSync('data.json', JSON.stringify(data), function writeJSON(err) {
+            if (err) return next(new ErrorResponse(err, 500));
+        });
+        res.status(200).json(data);
+    }catch (e) {
+        next(new ErrorResponse())
+    }
+
 }
 
 exports.getBoard = async (req, res, next) => {
     try {
         const data = fs.readFileSync('data.json')
         const board = JSON.parse(data)
-        console.log(board)
 
-        res.status(200).json(board);
+        res.status(200).json({board});
     } catch (e) {
         next(new ErrorResponse());
     }
@@ -80,16 +87,26 @@ exports.updateBoard = async (req, res, next) => {
             if (err) return next(new ErrorResponse(err, 500));
         });
 
-        const win = validateVictory(player, x, y)
-        if(win){
-            await resetBoard(next)
-            res.status(200).json('Congrats! YOU WON!');
+        const result = validateGame(player, x, y)
+        let winner;
+        if(result){
+            if(result === 'win'){
+                winner = player;
+            }
         }
 
         const data = fs.readFileSync('data.json')
         const board = JSON.parse(data)
-
-        res.status(200).json(board);
+        console.log({
+            board,
+            winner,
+            result
+        })
+        res.status(200).json({
+            board,
+            winner,
+            result
+        });
     } catch (e) {
         next(new ErrorResponse());
     }
