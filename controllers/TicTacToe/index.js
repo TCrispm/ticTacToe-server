@@ -3,27 +3,29 @@ const file = require("../../data.json");
 const ErrorResponse = require("../../utils/errorResponse");
 
 const validateGame = (player, x, y) => {
+  const n = 3;
   //check col
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < n; i++) {
     if (file.board[x][i] !== player) break;
-    if (i === 2) {
+    if (i === n - 1) {
       return "win";
     }
   }
 
   //check row
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < n; i++) {
     if (file.board[i][y] !== player) break;
-    if (i === 2) {
+    if (i === n - 1) {
       return "win";
     }
   }
 
   //check diag
   if (x === y) {
-    for (let i = 0; i < 3; i++) {
+    console.log("in_diagonal");
+    for (let i = 0; i < n; i++) {
       if (file.board[i][i] !== player) break;
-      if (i === 2) {
+      if (i === n - 1) {
         return "win";
       }
     }
@@ -31,9 +33,10 @@ const validateGame = (player, x, y) => {
 
   //check anti diag
   if (x + y === 2) {
-    for (let i = 0; i < 2; i++) {
-      if (file.board[i][2 - i] !== player) break;
-      if (i === 2) {
+    for (let i = 0; i < n; i++) {
+      if (file.board[i][n - 1 - i] !== player) break;
+      console.log("in_anti_diagonal", file.board[i][2 - i], i);
+      if (i === n - 1) {
         return "win";
       }
     }
@@ -41,7 +44,7 @@ const validateGame = (player, x, y) => {
 
   //check draw
 
-  if (file.round == 9) {
+  if (file.round == 10) {
     return "draw";
   }
   return undefined;
