@@ -105,7 +105,6 @@ exports.getBoard = async (req, res, next) => {
 exports.updateBoard = async (req, res, next) => {
   try {
     const { player, x, y } = req.body;
-    console.log(player, x, y);
     let nextPlayer;
     if (!player || x === undefined || x === undefined) {
       return next(new ErrorResponse("Player and square are required!", 404));
@@ -126,7 +125,6 @@ exports.updateBoard = async (req, res, next) => {
         if (err) return next(new ErrorResponse(err, 500));
       }
     );
-    console.log("dfgdf");
     const { result, winSquares } = validateGame(player, x, y);
     let winner;
 
