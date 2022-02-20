@@ -4,29 +4,43 @@ const ErrorResponse = require("../../utils/errorResponse");
 
 const validateGame = (player, x, y) => {
   const n = 3;
+  let winSquares = [];
+
   //check col
   for (let i = 0; i < n; i++) {
-    if (file.board[x][i] !== player) break;
+    if (file.board[x][i] !== player) {
+      winSquares = [];
+      break;
+    }
+
+    winSquares.push({ x, y: i });
     if (i === n - 1) {
-      return "win";
+      return { result: "win", winSquares };
     }
   }
 
   //check row
   for (let i = 0; i < n; i++) {
-    if (file.board[i][y] !== player) break;
+    if (file.board[i][y] !== player) {
+      winSquares = [];
+      break;
+    }
+    winSquares.push({ x: i, y });
     if (i === n - 1) {
-      return "win";
+      return { result: "win", winSquares };
     }
   }
 
   //check diag
   if (x === y) {
-    console.log("in_diagonal");
     for (let i = 0; i < n; i++) {
-      if (file.board[i][i] !== player) break;
+      if (file.board[i][i] !== player) {
+        winSquares = [];
+        break;
+      }
+      winSquares.push({ x: i, y: i });
       if (i === n - 1) {
-        return "win";
+        return { result: "win", winSquares };
       }
     }
   }
@@ -34,10 +48,13 @@ const validateGame = (player, x, y) => {
   //check anti diag
   if (x + y === 2) {
     for (let i = 0; i < n; i++) {
-      if (file.board[i][n - 1 - i] !== player) break;
-      console.log("in_anti_diagonal", file.board[i][2 - i], i);
+      if (file.board[i][n - 1 - i] !== player) {
+        winSquares = [];
+        break;
+      }
+      winSquares.push({ x: i, y: n - 1 - i });
       if (i === n - 1) {
-        return "win";
+        return { result: "win", winSquares };
       }
     }
   }
@@ -45,9 +62,9 @@ const validateGame = (player, x, y) => {
   //check draw
 
   if (file.round == 10) {
-    return "draw";
+    return { result: "draw" };
   }
-  return undefined;
+  return { result: undefined };
 };
 
 exports.resetBoard = async (req, res, next) => {
@@ -70,7 +87,7 @@ exports.resetBoard = async (req, res, next) => {
     );
     res.status(200).json(data);
   } catch (e) {
-    next(new ErrorResponse());
+    next(new ErrorResponse(e, 500));
   }
 };
 
@@ -81,7 +98,7 @@ exports.getBoard = async (req, res, next) => {
 
     res.status(200).json(board);
   } catch (e) {
-    next(new ErrorResponse());
+    next(new ErrorResponse(e, 500));
   }
 };
 
@@ -109,13 +126,14 @@ exports.updateBoard = async (req, res, next) => {
         if (err) return next(new ErrorResponse(err, 500));
       }
     );
-
-    const result = validateGame(player, x, y);
-    console.log(result);
+    console.log("dfgdf");
+    const { result, winSquares } = validateGame(player, x, y);
     let winner;
+
     if (result) {
       if (result === "win") {
         winner = player;
+        file.winSquares = winSquares;
       }
     }
 
@@ -135,6 +153,6 @@ exports.updateBoard = async (req, res, next) => {
 
     res.status(200).json(game);
   } catch (e) {
-    next(new ErrorResponse());
+    next(new ErrorResponse(e, 500));
   }
 };
